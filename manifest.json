@@ -1,0 +1,19 @@
+{
+  "name": "REA — Personal AI Assistant",
+  "short_name": "REA",
+  "description": "Your free personal AI assistant: one thread, persistent memory, tools, private vault. 100% offline-capable, no accounts.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f18",
+  "theme_color": "#0f1420",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

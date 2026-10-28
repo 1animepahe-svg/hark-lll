@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1420">
+<title>REA — your free personal assistant</title>
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="manifest" href="./manifest.json">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+<!-- ===== Lock overlay (vault PIN) ===== -->
+<div id="screen-lock" hidden>
+  <div class="lock-box">
+    <img src="./icon.svg" alt="" class="lock-logo">
+    <h2>REA is locked</h2>
+    <p class="dim">Enter your PIN to unlock your vault and key.</p>
+    <input id="lock-pin" type="password" inputmode="numeric" placeholder="PIN" autocomplete="off">
+    <button id="lock-unlock" class="btn primary wide">Unlock</button>
+    <div id="lock-error" class="err"></div>
+  </div>
+</div>
+
+<!-- ===== Sidebar ===== -->
+<aside id="sidebar">
+  <div class="side-head">
+    <img src="./icon.svg" alt="" class="side-logo">
+    <span class="side-name">REA</span>
+    <button id="settings-open" class="icon-btn" title="Settings">⚙️</button>
+  </div>
+  <button id="new-chat" class="btn primary wide">＋ New chat</button>
+  <nav id="thread-list" aria-label="Chats"></nav>
+  <nav class="side-nav">
+    <button class="nav-btn" data-screen="notes">📝 Notes</button>
+    <button class="nav-btn" data-screen="memory">🧠 Memory</button>
+    <button class="nav-btn" data-screen="tasks">✅ Action buttons</button>
+    <button class="nav-btn" data-screen="panels">🪟 Panels</button>
+    <button class="nav-btn" data-screen="tools">🧰 Quick tools</button>
+    <button class="nav-btn" data-screen="settings">⚙️ Settings</button>
+  </nav>
+  <button id="lock-hdr-btn" class="btn wide danger ghost">🔒 Lock REA</button>
+  <p class="dim small side-foot">100% free · runs in your browser · data stays on this device</p>
+</aside>
+<div id="scrim"></div>
+
+<!-- ===== Main ===== -->
+<main id="main">
+  <header id="topbar">
+    <button id="menu-btn" class="icon-btn" title="Menu">☰</button>
+    <h1 id="top-title">REA</h1>
+    <span id="model-chip" class="chip"></span>
+  </header>
+
+  <!-- Chat -->
+  <section id="screen-chat" class="screen">
+    <div id="messages"></div>
+  </section>
+
+  <!-- Notes -->
+  <section id="screen-notes" class="screen panel-body" hidden>
+    <div class="row">
+      <textarea id="note-input" rows="2" placeholder="Write a note…"></textarea>
+      <button id="note-add" class="btn primary">Add</button>
+    </div>
+    <h3>🔒 Private vault</h3>
+    <p class="dim small">Encrypted with your PIN. Warning: removing the PIN erases private notes.</p>
+    <div id="private-wrap"></div>
+    <h3>All notes</h3>
+    <div id="notes-list"></div>
+  </section>
+
+  <!-- Memory -->
+  <section id="screen-memory" class="screen panel-body" hidden>
+    <div class="row">
+      <input id="memory-input" placeholder="Teach REA something permanent… (e.g. 'I prefer oat milk')">
+      <button id="memory-add" class="btn primary">Remember</button>
+    </div>
+    <p class="dim small">Memory is injected into every conversation. The assistant adds facts here automatically too.</p>
+    <div id="memory-list"></div>
+    <button id="memory-clear" class="btn danger ghost">Clear all memory</button>
+  </section>
+
+  <!-- Tasks / action buttons -->
+  <section id="screen-tasks" class="screen panel-body" hidden>
+    <div class="row">
+      <input id="task-input" placeholder="Add an action item…">
+      <button id="task-add" class="btn primary">Add</button>
+    </div>
+    <p class="dim small">Each open task gets an “Ask REA” button — one tap sends it straight to the chat.</p>
+    <div id="task-list"></div>
+    <button id="task-suggest" class="btn">🪄 Suggest action items</button>
+  </section>
+
+  <!-- Panels -->
+  <section id="screen-panels" class="screen panel-body" hidden>
+    <div class="row">
+      <input id="panel-title" placeholder="Panel title (e.g. Bitcoin)">
+      <button id="panel-add" class="btn primary">Create</button>
+    </div>
+    <textarea id="panel-prompt" rows="2" placeholder="Prompt that fills the panel, e.g. 'Give a one-line plain-English summary of bitcoin price trends.'"></textarea>
+    <div id="panels-grid"></div>
+  </section>
+
+  <!-- Tools -->
+  <section id="screen-tools" class="screen panel-body" hidden>
+    <h3>🧮 Calculator</h3>
+    <div class="row">
+      <input id="calc-mini" placeholder="(12+8)*3^2, sqrt(144)…">
+      <button id="calc-go" class="btn primary">=</button>
+      <button id="dice-go" class="btn" title="Roll e.g. 2d6">🎲</button>
+    </div>
+    <div><input id="dice-in" placeholder="2d6" class="mini"></div>
+    <div id="calc-mini-result" class="result"></div>
+
+    <h3>🔄 Convert</h3>
+    <div class="row">
+      <input id="conv-val" placeholder="90" class="mini">
+      <input id="conv-from" placeholder="kg" class="mini">
+      <span class="dim">→</span>
+      <input id="conv-to" placeholder="lb" class="mini">
+      <button id="conv-go" class="btn primary">Go</button>
+    </div>
+    <div id="conv-result" class="result"></div>
+
+    <h3>⏱️ Timer</h3>
+    <div class="row">
+      <input id="timer-min" placeholder="10" class="mini" inputmode="numeric">
+      <input id="timer-label" placeholder="laundry">
+      <button id="timer-go" class="btn primary">Start</button>
+    </div>
+
+    <h3>🌐 Read a page</h3>
+    <div class="row">
+      <input id="read-url" placeholder="https://example.com/article">
+      <button id="read-go" class="btn primary">Read</button>
+    </div>
+    <pre id="read-out" class="result"></pre>
+  </section>
+
+  <!-- Settings -->
+  <section id="screen-settings" class="screen panel-body" hidden>
+    <h3>🤖 AI engine (100% free tiers)</h3>
+    <label class="field">Provider
+      <select id="provider">
+        <option value="groq">Groq — console.groq.com</option>
+        <option value="gemini">Google Gemini — aistudio.google.com</option>
+        <option value="openrouter">OpenRouter — openrouter.ai</option>
+      </select>
+    </label>
+    <label class="field">Model
+      <select id="model"></select>
+    </label>
+    <label class="field">Custom model id (optional, overrides the list)
+      <input id="model-custom" placeholder="e.g. llama-3.1-8b-instant">
+    </label>
+    <label class="field">API key (stored only on this device)
+      <input id="key-input" type="password" placeholder="Paste your free key…" autocomplete="off">
+    </label>
+    <div id="key-note" class="dim small"></div>
+    <div class="row">
+      <button id="save-settings" class="btn primary">Save</button>
+      <button id="test-key" class="btn">🧪 Test key</button>
+    </div>
+    <label class="check"><input type="checkbox" id="voice-out"> Speak replies out loud</label>
+
+    <h3>🔐 Vault PIN</h3>
+    <div id="pin-status"></div>
+    <div id="err-pin" class="err"></div>
+
+    <h3>💾 Backup</h3>
+    <div class="row">
+      <button id="export-btn" class="btn">⬇️ Export everything</button>
+      <label class="btn file"><input type="file" id="import-input" accept="application/json">⬆️ Import</label>
+      <button id="wipe-btn" class="btn danger ghost">Erase all data</button>
+      <button id="install-btn" class="btn" hidden>📲 Install app</button>
+    </div>
+    <p class="dim small">Backups exclude your key and PIN for safety. Import replaces current data.</p>
+  </section>
+</main>
+
+<!-- ===== Chat input ===== -->
+<div id="input-row">
+  <button id="mic-btn" class="icon-btn" title="Voice input">🎙️</button>
+  <textarea id="chat-input" rows="1" placeholder="Message REA… (⏎ send, ⇧⏎ newline)"></textarea>
+  <button id="stop-btn" class="icon-btn" title="Stop" hidden>⏹️</button>
+  <button id="send-btn" class="btn primary round" title="Send">➤</button>
+</div>
+
+<div id="toast"></div>
+
+<script src="./storage.js"></script>
+<script src="./tools.js"></script>
+<script src="./ai.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
