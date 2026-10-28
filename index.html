@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>hark</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+  <aside id="drawer">
+    <div class="d-head">
+      <span class="brand">hark</span>
+      <button id="drawerClose" class="ghost" aria-label="Close">✕</button>
+    </div>
+    <nav class="d-nav">
+      <button class="d-btn on" data-view="chat">💬 Chat</button>
+      <button class="d-btn" data-view="docs">📄 Docs</button>
+      <button class="d-btn" data-view="memory">🧠 Memory</button>
+      <button class="d-btn" data-view="notes">📝 Notes</button>
+      <button class="d-btn" data-view="reminders">⏰ Reminders</button>
+      <button class="d-btn" data-view="settings">⚙️ Settings</button>
+    </nav>
+    <div class="d-foot">
+      <button id="btnNew" class="ghost">＋ New chat</button>
+      <button id="btnExport" class="ghost">⬇ Export</button>
+      <button id="btnImport" class="ghost">⬆ Import</button>
+      <input type="file" id="importFile" accept=".json" hidden>
+    </div>
+  </aside>
+  <div id="backdrop"></div>
+
+  <main id="main">
+    <header id="topbar">
+      <button id="menuBtn" class="ghost" aria-label="Menu">☰</button>
+      <span class="brand-sm">hark</span>
+      <button id="voiceBtn" class="icon-btn" aria-label="Toggle voice">🔇</button>
+      <button id="modelBtn" class="model-chip">auto ▾</button>
+    </header>
+
+    <section id="view-chat" class="view active">
+      <div id="chat"></div>
+      <div id="toolcards"></div>
+      <form id="composer">
+        <div id="attachmentPreview"></div>
+        <div class="comp-row">
+          <button id="attachBtn" type="button" class="comp-icon" aria-label="Attach photo">📷</button>
+          <input type="file" id="photoInput" accept="image/*" hidden>
+          <button id="micBtn" type="button" class="comp-icon" aria-label="Voice input">🎤</button>
+          <textarea id="input" rows="1" placeholder="Whatever you need… let hark handle it" autocomplete="off"></textarea>
+          <button id="send" type="submit" aria-label="Send">➤</button>
+          <button id="stopGen" type="button" aria-label="Stop" hidden>■</button>
+        </div>
+      </form>
+      <div id="status"></div>
+    </section>
+
+    <section id="view-docs" class="view">
+      <h2>📄 Docs</h2>
+      <p class="dim">Long-form artifacts hark wrote for you — plans, guides, essays. Download as markdown.</p>
+      <div id="docList"></div>
+    </section>
+
+    <section id="view-memory" class="view">
+      <h2>🧠 Persistent Memory</h2>
+      <p class="dim">Facts hark always remembers about you. Given to the model with every message.</p>
+      <div id="memList"></div>
+      <form id="memAdd"><input id="memKey" placeholder="key (e.g. favourite food)" required>
+      <input id="memVal" placeholder="value (e.g. jollof rice)" required><button type="submit">+</button></form>
+    </section>
+
+    <section id="view-notes" class="view">
+      <h2>📝 Notes</h2>
+      <div id="noteList"></div>
+    </section>
+
+    <section id="view-reminders" class="view">
+      <h2>⏰ Reminders</h2>
+      <button id="askNotif" class="ghost">🔔 Enable notifications</button>
+      <p class="dim">Reminders fire as system notifications while hark is installed and running. Keep the app installed/open for guaranteed delivery.</p>
+      <div id="remList"></div>
+    </section>
+
+    <section id="view-settings" class="view">
+      <h2>⚙️ Settings</h2>
+      <label>Model
+        <select id="modelSel">
+          <option value="auto">Auto (with fallback)</option>
+          <option value="openai">openai</option>
+          <option value="openai-fast">openai-fast (fastest)</option>
+          <option value="mistral">mistral</option>
+          <option value="deepseek">deepseek (most capable)</option>
+        </select>
+      </label>
+      <label class="row">
+        <input type="checkbox" id="ToolsOn" checked>
+        <span>Allow hark to run local tools (calculator, notes, memory, web search, docs, reminders)</span>
+      </label>
+      <button id="btnClear" class="danger">🗑 Clear ALL data</button>
+      <p class="dim">Everything stays on your device. No accounts, no keys, no paywalls — free forever. Reading from hark.com (web RE) is not part of this app.</p>
+    </section>
+  </main>
+</div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
